@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"penny-api/server"
+
+	"github.com/kcalixto/penny-api/application"
+	"github.com/kcalixto/penny-api/server"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -15,8 +17,10 @@ var PORT = "5000"
 
 var echoLambda *echoadapter.EchoLambda
 
+var app = application.BuildApp()
+
 func init() {
-	echoLambda = server.CreateLambda()
+	echoLambda = server.CreateLambda(app)
 }
 
 func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -28,7 +32,7 @@ func main() {
 	lambdaDefaultEnvRuntime := os.Getenv("AWS_LAMBDA_RUNTIME_API")
 
 	if lambdaDefaultEnvPort == "" && lambdaDefaultEnvRuntime == "" {
-		server := server.CreateServer()
+		server := server.CreateServer(app)
 		err := server.Start(":" + PORT)
 		if err != nil {
 			fmt.Print("env_error: ", err)

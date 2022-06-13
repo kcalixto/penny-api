@@ -3,9 +3,15 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-
+	"github.com/kcalixto/penny-api/infra/context"
 	"github.com/labstack/echo/v4"
 )
+
+func getContext() context.Context {
+	context := context.New()
+
+	return context
+}
 
 func respondJSON(ctx echo.Context, statusCode int, data interface{}) error {
 
@@ -33,6 +39,10 @@ func respond(ctx echo.Context, statusCode int, data []byte) error {
 
 	_, err := ctx.Response().Write((data))
 	return HandleError(ctx, err)
+}
+
+func respondNoContent(ctx echo.Context) error {
+	return nil
 }
 
 func HandleError(ctx echo.Context, err error) error {

@@ -3,7 +3,9 @@ package handler
 import (
 	"fmt"
 	"net/http"
+
 	"github.com/kcalixto/penny-api/constants"
+	"github.com/kcalixto/penny-api/domain/contract"
 	"github.com/kcalixto/penny-api/viewmodel"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -29,7 +31,7 @@ func GetAllInstances() func(ctx echo.Context) error {
 					fmt.Println(aerr.Error())
 				}
 			} else {
-				fmt.Println(err.Error())
+				HandleError(ctx, err)
 			}
 		}
 
@@ -63,10 +65,30 @@ func GetAllInstancesDetailed() func(ctx echo.Context) error {
 
 func StartEC2(instanceService contract.InstanceService) func(ctx echo.Context) error {
 	return func(ctx echo.Context) error {
-		instanceID = ctx.Param("id")
+		context := getContext()
 
-		err := service.StartEC2(ctx, instanceID)
+		instanceID := ctx.Param("id")
 
-		return respondJSON(ctx, http.StatusOK, "Aloha!")
+		result, err := instanceService.StartEC2(context, instanceID)
+		if err != nil {
+			return HandleError(ctx, err)
+		}
+
+		return respondJSON(ctx, http.StatusOK, result)
+	}
+}
+
+func StopEC2(instanceService contract.InstanceService) func(ctx echo.Context) error {
+	return func(ctx echo.Context) error {
+		context := getContext()
+
+		instanceID := ctx.Param("id")
+
+		result, err := instanceService.StopEC2(context, instanceID)
+		if err != nil {
+			return HandleError(ctx, err)
+		}
+
+		return respondJSON(ctx, http.StatusOK, result)
 	}
 }

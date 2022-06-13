@@ -1,8 +1,11 @@
 package contract
 
-import "github.com/kcalixto/penny-api/domain/context"
+import (
+	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/kcalixto/penny-api/infra/context"
+)
 
 type InstanceService interface {
-	StartEc2(context context.Context, instanceID string) error
-	StopEc2(context context.Context, instanceID string) error
+	StartEC2(context context.Context, instanceID string) ([]*ec2.InstanceStateChange, error)
+	StopEC2(context context.Context, instanceID string) ([]*ec2.InstanceStateChange, error)
 }
