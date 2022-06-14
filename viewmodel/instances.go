@@ -14,11 +14,11 @@ type Reservation struct {
 
 type Instance struct {
 	ID             string
+	State          string
 	InstanceType   string
 	SecurityGroups []SecurityGroup
 	SubnetID       string
 	Network        Network
-	State          string
 	Tags           []Tag
 	VpcId          string
 }
@@ -54,11 +54,11 @@ func ParseDescribeInstancesOutput(instance *ec2.DescribeInstancesOutput) []Insta
 func parseInstance(ec2 *ec2.Instance) Instance {
 	return Instance{
 		ID:             *ec2.InstanceId,
+		State:          *ec2.State.Name,
 		InstanceType:   *ec2.InstanceType,
 		SecurityGroups: parseSecurityGroups(ec2.SecurityGroups),
 		SubnetID:       *ec2.SubnetId,
 		Network:        parseNetwork(ec2),
-		State:          *ec2.State.Name,
 		Tags:           parseTags(ec2.Tags),
 		VpcId:          *ec2.VpcId,
 	}
